@@ -1,0 +1,42 @@
+<div class="pie-chart-container">
+
+    <p class="pie-chart-name">{{pieChartName}}</p>
+
+    <svg width="240" height="140" viewBox="0 0 200 130">
+        <!-- Background arc -->
+        <path d="M5,110 A95,95 0 0,1 195,110" stroke="#4caf50" stroke-width="24" fill="none" />
+
+        <!-- Dynamic arc for achieved portion -->
+        <path [attr.d]="arcPath" stroke="#e0e0e0" stroke-width="24" fill="none" />
+
+        <!-- Marker for 100% -->
+        <ng-container *ngIf="markerCoordinates">
+            <line [attr.x1]="markerCoordinates.x1" [attr.y1]="markerCoordinates.y1" [attr.x2]="markerCoordinates.x2"
+                [attr.y2]="markerCoordinates.y2" stroke="red" stroke-width="2" />
+            <text [attr.x]="markerCoordinates.labelX" [attr.y]="markerCoordinates.labelY" font-size="12" fill="red"
+                text-anchor="middle" alignment-baseline="middle">
+                100% &nbsp;
+            </text>
+        </ng-container>
+
+        <!-- Center Percentage -->
+        <text x="100" y="80" text-anchor="middle" font-size="25" fill="#333">
+            {{ displayPercentage }}
+        </text>
+
+        <!-- Static label -->
+        <text x="100" y="100" text-anchor="middle" font-size="14" fill="#666">
+            Achievement
+        </text>
+    </svg>
+
+    <!-- Summary Info Row -->
+    <div class="summary-row">
+        <div class="summary-item">{{ label }}: <span>{{ inputValue }}</span> </div>
+        <div class="divider">|</div>
+        <div class="summary-item">Achieved: <span>{{ achieved }}</span> </div>
+        <div class="divider">|</div>
+        <div class="summary-item">Shortfall: <span>{{ shortfall }}</span> </div>
+    </div>
+
+</div>
