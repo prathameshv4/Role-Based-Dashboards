@@ -1,14 +1,17 @@
+<app-header></app-header>
+<div class="container">
+    <h1 class="text-primary">Sales Dashboard</h1>
+    <button class="btn btn-success">Click Me</button>
+</div>
+<app-bar></app-bar>
+
 <app-pie-chart [target]="1000" [achieved]="270" [pieChartName]="'Quick Heal'"></app-pie-chart>
 <app-pie-chart [target]="1000" [achieved]="500" [pieChartName]="'Quick Heal'"></app-pie-chart>
 <app-pie-chart [commit]="1000" [achieved]="750" [pieChartName]="'Quick Heal'"></app-pie-chart>
 <app-pie-chart [target]="1000" [achieved]="1250" [pieChartName]="'Quick Heal'"></app-pie-chart>
 <app-pie-chart [commit]="1000" [achieved]="750" [pieChartName]="'Quick Heal'"></app-pie-chart>
-<app-header></app-header>
-<div class="container">
 
+<app-donut-pie-chart [target]="100" [achieved]="75" pieChartName="Sales Performance"></app-donut-pie-chart>
 
-  <h1 class="text-primary">Sales Dashboard</h1>
-  <button class="btn btn-success">Click Me</button>
-
-</div>
-<app-bar></app-bar>
+<app-semi-circle-pie-chart [target]="100" [achieved]="75" pieChartName="Sales Performance"></app-semi-circle-pie-chart>
+<app-semi-circle-pie-chart [commit]="1000" [achieved]="1750" [pieChartName]="'Quick Heal'"></app-semi-circle-pie-chart>
