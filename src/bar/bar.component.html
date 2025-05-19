@@ -1,0 +1,17 @@
+<div class="bar-chart-conatiner">
+    <div class="w-100 d-flex justify-content-end">
+        <div class="btn-group btn-group-toggle mb-3">
+            <label *ngFor="let tab of tabs" class="btn" [ngClass]="{
+                 'btn-dark active': activeTab === tab.id,
+                 'btn-outline-secondary': activeTab !== tab.id
+               }" (click)="selectTab(tab.id)">
+                {{ tab.label }}
+            </label>
+        </div>
+    </div>
+
+
+
+
+    <div id="chartdiv" style="width: 100%; height:500px"></div>
+</div>
