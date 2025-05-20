@@ -1,3 +1,17 @@
-<div id={{pieChartName}} class="chartdiv card-body col-sm-12 col-md-12 col-lg-12 col-xl-12"
-    style="width: 400px; height: 400px;padding:15px;margin: 0">
+<div class="card mb-5 ms-3">
+    <span class="pie-chart-name ps-4 pt-4">{{pieChartName}}</span>
+    <div #chartDiv class="pt-0 pb-5"></div>
+    <div class="achievement">
+        <p class="mb-0 percetange">{{ achieved }}%</p>
+        <p>Achievement</p>
+    </div>
+
+    <!-- Summary Info Row -->
+    <div class="summary-row">
+        <div class="summary-item">{{ label }}: <span>{{ inputValue }}</span> </div>
+        <div class="divider">|</div>
+        <div class="summary-item">Achieved: <span>{{ achieved }}</span> </div>
+        <div class="divider">|</div>
+        <div class="summary-item">Shortfall: <span>{{ shortfall }}</span> </div>
+    </div>
 </div>
