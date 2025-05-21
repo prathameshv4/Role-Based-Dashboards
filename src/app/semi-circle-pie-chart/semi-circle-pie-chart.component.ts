@@ -41,7 +41,7 @@ export class SemiCirclePieChartComponent implements OnInit, OnDestroy, AfterView
     this.createSemiPieChart();
   }
 
-  createSemiPieChart(): void {
+  private createSemiPieChart(): void {
     this.chart = create(this.chartDiv.nativeElement, PieChart);
     this.chart.innerRadius = am4core.percent(70);
     this.chart.radius = am4core.percent(90)

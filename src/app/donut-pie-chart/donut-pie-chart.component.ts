@@ -1,5 +1,11 @@
+import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import * as am4core from "@amcharts/amcharts4/core";
+import * as am4charts from "@amcharts/amcharts4/charts";
+
+import { create, color } from '@amcharts/amcharts4/core';
+import { PieChart } from '@amcharts/amcharts4/charts';
+import { PieSeries } from '@amcharts/amcharts4/charts';
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
 
 
 @Component({
@@ -9,74 +15,85 @@ import { Component, Input, OnInit } from '@angular/core';
   templateUrl: './donut-pie-chart.component.html',
   styleUrl: './donut-pie-chart.component.css'
 })
-export class DonutPieChartComponent implements OnInit {
+export class DonutPieChartComponent implements OnInit, OnDestroy, AfterViewInit {
+
   @Input() target?: number;
   @Input() commit?: number;
   @Input() achieved: number = 0;
   @Input() pieChartName: string = '';
 
-  public label = '';
-  public inputValue = 0;
-  public shortfall = 0;
-  public percentage = 0;
-  public displayPercentage = '0%';
-  public arcPath: string = '';
-  public markerCoordinates: { x1: number, y1: number, x2: number, y2: number, labelX: number, labelY: number } | null = null;
+  public percentage: number = 0;
+  public inputValue: number = 0;
+  public shortfall: number = 0;
+  public label: string = '';
+
+  private chart?: am4charts.PieChart;
+
+  @ViewChild('chartDiv') chartDiv: ElementRef;
 
   ngOnInit(): void {
     this.inputValue = this.target ?? this.commit ?? 0;
     this.label = this.target !== undefined ? 'Target' : 'Commit';
-    this.calculateValues();
+    this.percentage = this.inputValue > 0 ? (this.achieved / this.inputValue) * 100 : 0;
+    this.shortfall = Math.max(this.inputValue - this.achieved, 0);
   }
 
-  public calculateValues(): void {
-    if (this.inputValue === 0) return;
-
-    this.percentage = (this.achieved / this.inputValue) * 100;
-    this.displayPercentage = `${Math.round(this.percentage)}%`;
-    this.shortfall = this.achieved < this.inputValue ? this.inputValue - this.achieved : 0;
-
-    const angle = Math.min(this.percentage, 100) * 3.6;
-    this.arcPath = this.getArcPath(angle);
-
-    this.markerCoordinates = this.percentage > 100 ? this.getMarkerCoordinates() : null;
+  ngAfterViewInit(): void {
+    this.createPieChart();
   }
 
-  public getArcPath(angle: number): string {
-    const radius = 90;
-    const cx = 100, cy = 100;
-    const startAngle = -90;
-    const endAngle = startAngle + angle;
+  private createPieChart(): void {
+    this.chart = create(this.chartDiv.nativeElement, PieChart);
+    this.chart.innerRadius = am4core.percent(65);
+    this.chart.radius = am4core.percent(95)
 
-    const largeArcFlag = angle > 180 ? 1 : 0;
+    this.chart.data = [
+      { category: 'Achieved', value: (this.percentage <= 100) ? this.achieved : 0 },
+      { category: 'Shortfall', value: (this.inputValue - this.achieved) > 0 ? (this.inputValue - this.achieved) : 0 },
+      { category: 'Base 100%', value: (this.percentage > 100) ? this.inputValue : 0 },
+      { category: 'Over Achievement', value: (this.percentage > 100) ? (this.achieved - this.inputValue) : 0 }
+    ];
 
-    const startX = cx + radius * Math.cos(startAngle * Math.PI / 180);
-    const startY = cy + radius * Math.sin(startAngle * Math.PI / 180);
+    const pieSeries = this.chart.series.push(new PieSeries());
+    pieSeries.dataFields.value = 'value';
+    pieSeries.dataFields.category = 'category';
 
-    const endX = cx + radius * Math.cos(endAngle * Math.PI / 180);
-    const endY = cy + radius * Math.sin(endAngle * Math.PI / 180);
+    pieSeries.slices.template.cornerRadius = 0;
+    // pieSeries.slices.template.innerRadius = 90;
+    // let fillModifier = new am4core.RadialGradientModifier();
+    // fillModifier.opacities = [1, 1, 0];
+    // fillModifier.offsets = [0, 0.8, 1];
+    // pieSeries.slices.template.fillModifier = fillModifier;
 
-    return `M ${startX},${startY} A ${radius},${radius} 0 ${largeArcFlag},1 ${endX},${endY}`;
+    pieSeries.slices.template.adapter.add('fill', (fill, target) => {
+      if (target.dataItem.dataContext['category'] === 'Shortfall') {
+        return color('#e0e0e0');
+      }
+      if (target.dataItem.dataContext['category'] === 'Over Achievement') {
+        return color('#2ca02c');
+      }
+      if (target.dataItem.dataContext['category'] === 'Base 100%') {
+        return color('#ffbf00');
+      }
+      if (target.dataItem.dataContext['category'] === 'Achieved') {
+        if (this.percentage < 90) return color("#d62728");
+        else if (this.percentage < 100) return color("#ffbf00");
+        else return color("#2ca02c");
+      }
+      return color('#000000');
+
+    });
+    pieSeries.slices.template.stroke = color('#ffffff');
+    pieSeries.labels.template.disabled = true;
+
+    if (this.percentage > 100) pieSeries.slices.template.tooltipText = "{category}";
+
   }
 
-  public getMarkerCoordinates() {
-    const angleDeg = 360; // 100%
-    const angleRad = (angleDeg - 90) * Math.PI / 180;
-
-    const innerRadius = 80;
-    const outerRadius = 100;
-    const extraLength = 8;
-
-    const x1 = 100 + innerRadius * Math.cos(angleRad);
-    const y1 = 100 + innerRadius * Math.sin(angleRad);
-
-    const x2 = 100 + (outerRadius + extraLength) * Math.cos(angleRad);
-    const y2 = 100 + (outerRadius + extraLength) * Math.sin(angleRad);
-
-    const labelX = 100 + (outerRadius + extraLength + 10) * Math.cos(angleRad);
-    const labelY = 100 + (outerRadius + extraLength + 10) * Math.sin(angleRad);
-
-    return { x1, y1, x2, y2, labelX, labelY };
+  ngOnDestroy(): void {
+    if (this.chart) {
+      this.chart.dispose();
+    }
   }
 }
 

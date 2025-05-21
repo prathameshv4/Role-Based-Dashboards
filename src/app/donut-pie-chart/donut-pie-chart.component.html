@@ -1,37 +1,20 @@
-<div class="pie-chart-container">
-    <p class="pie-chart-name">{{ pieChartName }}</p>
+<div class="card">
+    <span class="pie-chart-name">{{pieChartName}}</span>
+    <div #chartDiv class=""></div>
+    <div class="achievement">
+        <p class="percentage">{{ percentage }}%</p>
+        <p>Achievement</p>
+    </div>
 
-    <svg width="200" height="200" viewBox="-2 -2 204 204">
-        <!-- Background circle -->
-        <circle cx="100" cy="100" r="90" stroke="#4caf50" stroke-width="24" fill="none" />
-
-        <!-- Filled arc -->
-        <path [attr.d]="arcPath" stroke="#e0e0e0" stroke-width="24" fill="none" />
-
-        <!-- Overachievement marker at 100% -->
-        <ng-container *ngIf="markerCoordinates">
-            <line [attr.x1]="markerCoordinates.x1" [attr.y1]="markerCoordinates.y1" [attr.x2]="markerCoordinates.x2"
-                [attr.y2]="markerCoordinates.y2" stroke="red" stroke-width="2" />
-            <text [attr.x]="markerCoordinates.labelX" [attr.y]="markerCoordinates.labelY" font-size="12" fill="red"
-                text-anchor="middle" alignment-baseline="middle">
-                100%
-            </text>
-        </ng-container>
-
-        <!-- Center text -->
-        <text x="100" y="105" text-anchor="middle" font-size="24" fill="#333">
-            {{ displayPercentage }}
-        </text>
-        <text x="100" y="125" text-anchor="middle" font-size="14" fill="#666">
-            Achievement
-        </text>
-    </svg>
-
-    <div class="summary-row">
-        <div class="summary-item">{{ label }}: <span>{{ inputValue }}</span></div>
-        <div class="divider">|</div>
-        <div class="summary-item">Achieved: <span>{{ achieved }}</span></div>
-        <div class="divider">|</div>
-        <div class="summary-item">Shortfall: <span>{{ shortfall }}</span></div>
+    <!-- Summary Info Row -->
+    <div class="summary-info">
+        <div class="summary-row">
+            <div class="summary-item">{{ label }}: <span>{{ inputValue }}</span> </div>
+            <div class="divider">|</div>
+            <div class="summary-item">Achieved: <span>{{ achieved }}</span> </div>
+        </div>
+        <div class="summary-row">
+            <div class="summary-item">Shortfall: <span>{{ shortfall }}</span> </div>
+        </div>
     </div>
 </div>
