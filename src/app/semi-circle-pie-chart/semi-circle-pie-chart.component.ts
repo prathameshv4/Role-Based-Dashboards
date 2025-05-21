@@ -21,59 +21,24 @@ export class SemiCirclePieChartComponent implements OnInit, OnDestroy, AfterView
   @Input() achieved: number = 0;
   @Input() pieChartName: string = '';
 
+  public percentage: number = 0;
   public inputValue: number = 0;
-  public label: string = '';
   public shortfall: number = 0;
+  public label: string = '';
 
   private chart?: am4charts.PieChart;
-  public percentage: number = 0;
 
-  public percentageText: string = '';
   @ViewChild('chartDiv') chartDiv: ElementRef;
-  actualPercentage: number;
-
-  ngAfterViewInit(): void {
-
-    // const achievedColor = this.percentage > 100 ? "#ffff1a" : "#ff0000";
-    // const shortfallColor = this.percentage > 100 ? "#00cc00" : "#e0e0e0";
-
-    // // Chart config
-    // this.chart = am4core.create(this.pieChartName, am4charts.PieChart);
-    // this.chart.innerRadius = am4core.percent(50);
-    // // this.chart.startAngle = 180;
-    // // this.chart.endAngle = 360;
-
-    // this.chart.data = [
-    //   {
-    //     key: "Achieved",
-    //     value: this.achieved,
-    //     color: am4core.color(achievedColor)
-    //   },
-    //   {
-    //     key: "Shortfall",
-    //     value: this.shortfall,
-    //     color: am4core.color(shortfallColor)
-    //   }
-    // ];
-
-    // let pieSeries = this.chart.series.push(new am4charts.PieSeries());
-    // pieSeries.dataFields.value = "value";
-    // pieSeries.dataFields.category = "key";
-    // pieSeries.slices.template.propertyFields.fill = "color";
-
-    // pieSeries.slices.template.states.getKey("hover").properties.scale = 1;
-    // pieSeries.labels.template.text = "";
-    // pieSeries.ticks.template.disabled = true;
-    // pieSeries.tooltip.disabled = true;
-    this.createSemiPieChart();
-  }
 
   ngOnInit(): void {
     this.inputValue = this.target ?? this.commit ?? 0;
     this.label = this.target !== undefined ? 'Target' : 'Commit';
     this.percentage = this.inputValue > 0 ? (this.achieved / this.inputValue) * 100 : 0;
     this.shortfall = Math.max(this.inputValue - this.achieved, 0);
-    this.actualPercentage = (this.achieved / this.target) * 100;
+  }
+
+  ngAfterViewInit(): void {
+    this.createSemiPieChart();
   }
 
   createSemiPieChart(): void {
@@ -81,8 +46,10 @@ export class SemiCirclePieChartComponent implements OnInit, OnDestroy, AfterView
     this.chart.innerRadius = am4core.percent(60);
 
     this.chart.data = [
-      { category: 'Achieved', value: this.achieved },
-      { category: 'Shortfall', value: (this.target - this.achieved) > 0 ? (this.target - this.achieved) : 0 }
+      { category: 'Achieved', value: (this.percentage <= 100) ? this.achieved : 0 },
+      { category: 'Shortfall', value: (this.inputValue - this.achieved) > 0 ? (this.inputValue - this.achieved) : 0 },
+      { category: 'Base 100%', value: (this.percentage > 100) ? this.inputValue : 0 },
+      { category: 'Over Achievement', value: (this.percentage > 100) ? (this.achieved - this.inputValue) : 0 }
     ];
 
     this.chart.startAngle = 180;
@@ -94,15 +61,34 @@ export class SemiCirclePieChartComponent implements OnInit, OnDestroy, AfterView
 
     pieSeries.slices.template.cornerRadius = 0;
     pieSeries.slices.template.innerRadius = 50;
+    // let fillModifier = new am4core.RadialGradientModifier();
+    // fillModifier.opacities = [1, 1, 0];
+    // fillModifier.offsets = [0, 0.8, 1];
+    // pieSeries.slices.template.fillModifier = fillModifier;
 
     pieSeries.slices.template.adapter.add('fill', (fill, target) => {
       if (target.dataItem.dataContext['category'] === 'Shortfall') {
         return color('#e0e0e0');
       }
-      return color('#4caf50');
+      if (target.dataItem.dataContext['category'] === 'Over Achievement') {
+        return color('#2ca02c');
+      }
+      if (target.dataItem.dataContext['category'] === 'Base 100%') {
+        return color('#ffbf00');
+      }
+      if (target.dataItem.dataContext['category'] === 'Achieved') {
+        if (this.percentage < 90) return color("#d62728");
+        else if (this.percentage < 100) return color("#ffbf00");
+        else return color("#2ca02c");
+      }
+      return color('#000000');
+
     });
     pieSeries.slices.template.stroke = color('#ffffff');
     pieSeries.labels.template.disabled = true;
+
+    if (this.percentage > 100) pieSeries.slices.template.tooltipText = "";
+
 
     // if (this.actualPercentage > 100) {
     //   const angle = 270 + (this.achieved / this.target) * 180;
