@@ -43,7 +43,8 @@ export class SemiCirclePieChartComponent implements OnInit, OnDestroy, AfterView
 
   createSemiPieChart(): void {
     this.chart = create(this.chartDiv.nativeElement, PieChart);
-    this.chart.innerRadius = am4core.percent(60);
+    this.chart.innerRadius = am4core.percent(70);
+    this.chart.radius = am4core.percent(90)
 
     this.chart.data = [
       { category: 'Achieved', value: (this.percentage <= 100) ? this.achieved : 0 },
@@ -60,7 +61,7 @@ export class SemiCirclePieChartComponent implements OnInit, OnDestroy, AfterView
     pieSeries.dataFields.category = 'category';
 
     pieSeries.slices.template.cornerRadius = 0;
-    pieSeries.slices.template.innerRadius = 50;
+
     // let fillModifier = new am4core.RadialGradientModifier();
     // fillModifier.opacities = [1, 1, 0];
     // fillModifier.offsets = [0, 0.8, 1];
@@ -89,20 +90,6 @@ export class SemiCirclePieChartComponent implements OnInit, OnDestroy, AfterView
 
     if (this.percentage > 100) pieSeries.slices.template.tooltipText = "";
 
-
-    // if (this.actualPercentage > 100) {
-    //   const angle = 270 + (this.achieved / this.target) * 180;
-
-    //   const thresholdLine = this.chart.seriesContainer.createChild(am4core.Line);
-    //   thresholdLine.stroke = am4core.color("#FF0000");
-    //   thresholdLine.strokeWidth = 2;
-    //   thresholdLine.strokeDasharray = "4,4";
-
-    //   thresholdLine.y2 = 170;
-    //   thresholdLine.x1 = 0
-    //   thresholdLine.y1 = 115
-    //   thresholdLine.rotation = angle;
-    // }
   }
 
   ngOnDestroy(): void {
