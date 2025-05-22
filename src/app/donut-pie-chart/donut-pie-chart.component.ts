@@ -6,12 +6,13 @@ import { create, color } from '@amcharts/amcharts4/core';
 import { PieChart } from '@amcharts/amcharts4/charts';
 import { PieSeries } from '@amcharts/amcharts4/charts';
 import { CommonModule } from '@angular/common';
+import { NumberSuffixPipe } from '../number-suffix.pipe';
 
 
 @Component({
   selector: 'app-donut-pie-chart',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, NumberSuffixPipe],
   templateUrl: './donut-pie-chart.component.html',
   styleUrl: './donut-pie-chart.component.css'
 })
@@ -34,7 +35,7 @@ export class DonutPieChartComponent implements OnInit, OnDestroy, AfterViewInit 
   ngOnInit(): void {
     this.inputValue = this.target ?? this.commit ?? 0;
     this.label = this.target !== undefined ? 'Target' : 'Commit';
-    this.percentage = this.inputValue > 0 ? (this.achieved / this.inputValue) * 100 : 0;
+    this.percentage = this.inputValue > 0 ? parseFloat(((this.achieved / this.inputValue) * 100).toFixed(2)) : 0;
     this.shortfall = Math.max(this.inputValue - this.achieved, 0);
   }
 

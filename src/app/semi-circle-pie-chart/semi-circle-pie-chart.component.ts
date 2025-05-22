@@ -6,11 +6,12 @@ import { create, color } from '@amcharts/amcharts4/core';
 import { PieChart } from '@amcharts/amcharts4/charts';
 import { PieSeries } from '@amcharts/amcharts4/charts';
 import { CommonModule } from '@angular/common';
+import { NumberSuffixPipe } from '../number-suffix.pipe';
 
 @Component({
   selector: 'app-semi-circle-pie-chart',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, NumberSuffixPipe],
   templateUrl: './semi-circle-pie-chart.component.html',
   styleUrl: './semi-circle-pie-chart.component.css'
 })
@@ -33,7 +34,7 @@ export class SemiCirclePieChartComponent implements OnInit, OnDestroy, AfterView
   ngOnInit(): void {
     this.inputValue = this.target ?? this.commit ?? 0;
     this.label = this.target !== undefined ? 'Target' : 'Commit';
-    this.percentage = this.inputValue > 0 ? (this.achieved / this.inputValue) * 100 : 0;
+    this.percentage = this.inputValue > 0 ? parseFloat(((this.achieved / this.inputValue) * 100).toFixed(2)) : 0;
     this.shortfall = Math.max(this.inputValue - this.achieved, 0);
   }
 
@@ -88,7 +89,7 @@ export class SemiCirclePieChartComponent implements OnInit, OnDestroy, AfterView
     pieSeries.slices.template.stroke = color('#ffffff');
     pieSeries.labels.template.disabled = true;
 
-    if (this.percentage > 100) pieSeries.slices.template.tooltipText = "";
+    if (this.percentage > 100) pieSeries.slices.template.tooltipText = "{category}";
 
   }
 

@@ -8,10 +8,10 @@
 
     <!-- Summary Info Row -->
     <div class="summary-row">
-        <div class="summary-item">{{ label }}: <span>{{ inputValue }}</span> </div>
+        <div class="summary-item">{{ label }}: <span>{{ inputValue | numberSuffix }}</span> </div>
         <div class="divider">|</div>
-        <div class="summary-item">Achieved: <span>{{ achieved }}</span> </div>
+        <div class="summary-item">Achieved: <span>{{ achieved | numberSuffix }}</span> </div>
         <div class="divider">|</div>
-        <div class="summary-item">Shortfall: <span>{{ shortfall }}</span> </div>
+        <div class="summary-item">Shortfall: <span>{{ shortfall | numberSuffix }}</span> </div>
     </div>
 </div>
